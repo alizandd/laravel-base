@@ -1,0 +1,245 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "HAMSAM",
+        "description": "\n * \t  1) call login method and get access_token add token_type in this format : {token_type}+{access_token}\n * \t  2) use them as authorization keys",
+        "contact": {
+            "name": "alizand",
+            "email": "alizandd@gmail.com"
+        },
+        "version": "1"
+    },
+    "servers": [
+        {
+            "url": "{Schema}://{Host}/{Version}",
+            "description": "DEVELOP",
+            "variables": {
+                "Schema": {
+                    "enum": [
+                        "https",
+                        "http"
+                    ],
+                    "default": "http"
+                },
+                "Version": {
+                    "enum": [
+                        "v1",
+                        "v2"
+                    ],
+                    "default": "v1"
+                },
+                "Host": {
+                    "enum": [
+                        "localhost/backend/src/public/api",
+                        "ssn.tvapps.ir/api",
+                        "127.0.0.1:8000/api"
+                    ],
+                    "default": "localhost/backend/src/public/api"
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/generate-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Generate OTP",
+                "description": "Generates an OTP and sends it to the user's mobile number",
+                "operationId": "generateOtp",
+                "requestBody": {
+                    "description": "Mobile number of the user",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "mobile"
+                                ],
+                                "properties": {
+                                    "mobile": {
+                                        "type": "string",
+                                        "format": "mobile",
+                                        "example": "09354541589"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": null
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string",
+                                                    "example": "4CAaZCJ3IZ1sWgai1pdzsBFMOyXFLVyU"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid mobile number provided"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a user",
+                "description": "Registers a new user with mobile, code, key, mac, and device type.",
+                "operationId": "registerUser",
+                "requestBody": {
+                    "description": "User registration data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "mobile",
+                                    "code",
+                                    "key",
+                                    "mac",
+                                    "device_type"
+                                ],
+                                "properties": {
+                                    "mobile": {
+                                        "type": "string",
+                                        "format": "mobile",
+                                        "example": "1234567890"
+                                    },
+                                    "code": {
+                                        "type": "integer",
+                                        "example": 123456
+                                    },
+                                    "key": {
+                                        "type": "string",
+                                        "example": "4CAaZCJ3IZ1sWgai1pdzsBFMOyXFLVyU"
+                                    },
+                                    "mac": {
+                                        "type": "string",
+                                        "example": "00:1B:44:11:3A:B7"
+                                    },
+                                    "device_type": {
+                                        "type": "string",
+                                        "example": "Tizen"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User registered successfully."
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "mobile": {
+                                                    "type": "string",
+                                                    "example": "1234567890"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid registration details provided"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/resource.json": {
+            "get": {
+                "operationId": "c3013fe5e1526f700bdee1621fb6e399",
+                "responses": {
+                    "200": {
+                        "description": "An example resource"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "Authorization": {
+                "type": "apiKey",
+                "description": "{token_type}+{access_token}",
+                "name": "Authorization",
+                "in": "header",
+                "default": "Bearer {apiKey}"
+            }
+        }
+    }
+}

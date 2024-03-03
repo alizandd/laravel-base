@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('mobile')->unique();
-            $table->string('mac')->unique();
-            $table->string('password');
+            $table->string('mac');
+            $table->string('password')->nullable();
             $table->string('pic')->nullable();
             $table->integer('score')->default(0);
             $table->tinyInteger('type')->default(0);

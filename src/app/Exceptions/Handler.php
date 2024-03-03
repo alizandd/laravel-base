@@ -4,12 +4,16 @@ namespace App\Exceptions;
 
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Response;
 
 class Handler extends ExceptionHandler
 {
+    use ApiResponse;
     /**
      * The list of the inputs that are never flashed to the session on validation exceptions.
      *
@@ -37,10 +41,38 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
+
     public function render($request, Throwable $exception)
     {
+        if ($request->expectsJson()) {
+            if ($exception instanceof \Illuminate\Validation\ValidationException) {
+                return $this->error($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY, $exception->errors());
+            }
 
-        Log::alert('E: ',[ 'success' => FALSE , 'data' => [ 'code' => $exception->getCode(), 'message' => $exception instanceof ValidationException ? $exception->errors() : $exception->getMessage() ,'r'=>$request->path() , 'ip'=>$request->ip()]]);
-        return $request->expectsJson() ? response()->json([ 'success' => FALSE , 'data' => [ 'code' => $exception->getCode(), 'message' => $exception instanceof ValidationException ? $exception->errors() : $exception->getMessage()  ] ], ($exception->getMessage() =='Unauthenticated.'?401:200)) : parent::render($request, $exception);
+            if ($exception instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                return $this->error('Resource not found', Response::HTTP_NOT_FOUND);
+            }
+
+            if ($exception instanceof ThrottleRequestsException) {
+                $retryAfter = $exception->getHeaders()['Retry-After']; // Seconds until next attempt
+                return $this->error(__('auth.throttle', [ 'seconds' =>$retryAfter ]), Response::HTTP_TOO_MANY_REQUESTS);
+            }
+
+            // Customize the response for specific exceptions
+            if ($exception instanceof \App\Exceptions\CustomException) {
+                return $this->error($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+            }
+            // You can add more specific exceptions here
+
+            return $this->error($exception->getMessage(), $exception->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return parent::render($request, $exception);
     }
+//    public function render($request, Throwable $exception)
+//    {
+//
+//        Log::alert('E: ',[ 'success' => FALSE , 'data' => [ 'code' => $exception->getCode(), 'message' => $exception instanceof ValidationException ? $exception->errors() : $exception->getMessage() ,'r'=>$request->path() , 'ip'=>$request->ip()]]);
+//        return $request->expectsJson() ? response()->json([ 'success' => FALSE , 'data' => [ 'code' => $exception->getCode(), 'message' => $exception instanceof ValidationException ? $exception->errors() : $exception->getMessage()  ] ], ($exception->getMessage() =='Unauthenticated.'?401:200)) : parent::render($request, $exception);
+//    }
 }

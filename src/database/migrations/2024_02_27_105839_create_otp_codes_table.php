@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('mobile', 20);
             $table->char('code', 6);
             $table->char('key', 32);
-            $table->string('token', 100);
-            $table->tinyInteger('status');
-            $table->tinyInteger('count');
+            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('count')->default(0);
             $table->timestamp('expire_at');
             $table->timestamps();
             $table->softDeletes();
