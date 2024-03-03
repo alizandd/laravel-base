@@ -10,6 +10,7 @@ class TokenService implements TokenInterface
 {
     public function createToken(User $user, $type, $rememberMe = false):array
     {
+        $user->tokens()->where('name', $type)->delete();
         $tokenResult = $user->createToken($type);
         $token = $tokenResult->token;
         if ($rememberMe) {

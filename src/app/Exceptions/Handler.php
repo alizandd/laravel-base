@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +35,23 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    /**
+     * Convert an authentication exception into an unauthenticated response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Auth\AuthenticationException  $exception
+     * @return \Illuminate\Http\Response
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        // Determine if the request expects a JSON response
+        if ($request->expectsJson()) {
+            return $this->error('Unauthenticated', 401);
+        }
+        // For non-API routes, redirect to a login page or return a different type of response
+        return parent::unauthenticated($request, $exception);
+    }
     /**
      * Render an exception into an HTTP response.
      *
@@ -44,7 +62,13 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+
         if ($request->expectsJson()) {
+
+
+            if ($exception instanceof \Illuminate\Auth\AuthenticationException) {
+                return $this->error('Unauthenticated.', Response::HTTP_UNAUTHORIZED);
+            }
             if ($exception instanceof \Illuminate\Validation\ValidationException) {
                 return $this->error($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY, $exception->errors());
             }

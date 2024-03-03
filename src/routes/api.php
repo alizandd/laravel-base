@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,5 +23,6 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         Route::post('/register', [AuthController::class,'register'])->middleware('throttle:500,1440'); // 5 attempts per 1440 minutes (24 hours);
 
         Route::middleware(['auth:api'])->group(function () {
+            Route::get('/user/profile', [UserController::class,'index']);
         });
 });

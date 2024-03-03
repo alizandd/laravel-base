@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\OtpRequest;
 use App\Http\Requests\V1\RegisterRequest;
 use App\Http\Resources\V1\GenerateOtpResource;
+use App\Models\Device;
 use App\Models\OtpCode;
 use App\Models\User;
 use App\Services\Contracts\TokenInterface;
@@ -78,42 +79,45 @@ class AuthController extends Controller
     /**
      * @OA\Post(
      *     path="/register",
-     *     summary="Register a user",
-     *     description="Registers a new user with mobile, code, key, mac, and device type.",
+     *     summary="Register user",
+     *     description="Registers a new user and returns an access token along with token type and expiry.",
      *     operationId="registerUser",
      *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
-     *         description="User registration data",
+     *         description="Payload for registering a new user",
      *         @OA\JsonContent(
-     *             required={"mobile", "code", "key", "mac", "device_type"},
-     *             @OA\Property(property="mobile", type="string", format="mobile", example="09354541589"),
-     *             @OA\Property(property="code", type="integer", example=123456),
+     *             required={"code", "key", "mobile", "mac", "device_type"},
+     *             @OA\Property(property="code", type="integer", example=841679),
      *             @OA\Property(property="key", type="string", example="4CAaZCJ3IZ1sWgai1pdzsBFMOyXFLVyU"),
+     *             @OA\Property(property="mobile", type="string", example="09354541589"),
      *             @OA\Property(property="mac", type="string", example="00:1B:44:11:3A:B7"),
      *             @OA\Property(property="device_type", type="string", example="Tizen")
      *         ),
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="User registered successfully",
+     *         description="Successful registration",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="User registered successfully."),
+     *             @OA\Property(property="message", type="string", example=null),
      *             @OA\Property(
-     *                 property="user",
+     *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="mobile", type="string", example="1234567890"),
-     *
+     *                 @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."),
+     *                 @OA\Property(property="token_type", type="string", example="Bearer"),
+     *                 @OA\Property(property="expires_at", type="string", example="2025-03-03 13:45:44")
      *             ),
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
-     *         description="Invalid input",
+     *         response=403,
+     *         description="Forbidden - Invalid or expired code",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Invalid registration details provided"),
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="کد وارد شده نامعتبر یا منقضی شده است .")
      *         )
      *     )
      * )
@@ -125,6 +129,8 @@ class AuthController extends Controller
         }
 
         $user = User::updateOrCreate([ 'mobile' => $request->mobile ], [ 'mac' => $request->mac]);
+        Device::updateOrCreate(['user_id' => $user->id, 'mac' => $request->mac], ['device_type' => $request->device_type]);
+
         $token = $this->tokenService->createToken($user , $request->device_type);
         return $this->success($token);
     }

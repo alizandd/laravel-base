@@ -127,35 +127,34 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Register a user",
-                "description": "Registers a new user with mobile, code, key, mac, and device type.",
+                "summary": "Register user",
+                "description": "Registers a new user and returns an access token along with token type and expiry.",
                 "operationId": "registerUser",
                 "requestBody": {
-                    "description": "User registration data",
+                    "description": "Payload for registering a new user",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "mobile",
                                     "code",
                                     "key",
+                                    "mobile",
                                     "mac",
                                     "device_type"
                                 ],
                                 "properties": {
-                                    "mobile": {
-                                        "type": "string",
-                                        "format": "mobile",
-                                        "example": "1234567890"
-                                    },
                                     "code": {
                                         "type": "integer",
-                                        "example": 123456
+                                        "example": 841679
                                     },
                                     "key": {
                                         "type": "string",
                                         "example": "4CAaZCJ3IZ1sWgai1pdzsBFMOyXFLVyU"
+                                    },
+                                    "mobile": {
+                                        "type": "string",
+                                        "example": "09354541589"
                                     },
                                     "mac": {
                                         "type": "string",
@@ -173,7 +172,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "User registered successfully",
+                        "description": "Successful registration",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -184,13 +183,21 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "User registered successfully."
+                                            "example": null
                                         },
-                                        "user": {
+                                        "data": {
                                             "properties": {
-                                                "mobile": {
+                                                "access_token": {
                                                     "type": "string",
-                                                    "example": "1234567890"
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                },
+                                                "expires_at": {
+                                                    "type": "string",
+                                                    "example": "2025-03-03 13:45:44"
                                                 }
                                             },
                                             "type": "object"
@@ -201,15 +208,19 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid input",
+                    "403": {
+                        "description": "Forbidden - Invalid or expired code",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "error": {
+                                        "status": {
                                             "type": "string",
-                                            "example": "Invalid registration details provided"
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "کد وارد شده نامعتبر یا منقضی شده است ."
                                         }
                                     },
                                     "type": "object"
@@ -218,6 +229,88 @@
                         }
                     }
                 }
+            }
+        },
+        "/user/profile": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get User Profile",
+                "description": "Retrieves the profile of the authenticated user.",
+                "operationId": "getUserProfile",
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of user profile",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": null
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "first_name": {
+                                                    "type": "string",
+                                                    "example": null
+                                                },
+                                                "last_name": {
+                                                    "type": "string",
+                                                    "example": null
+                                                },
+                                                "mobile": {
+                                                    "type": "string",
+                                                    "example": "093****589"
+                                                },
+                                                "pic": {
+                                                    "type": "string",
+                                                    "example": null
+                                                },
+                                                "score": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             }
         },
         "/api/resource.json": {

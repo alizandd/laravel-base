@@ -40,4 +40,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function getMobileAttribute($value)
+    {
+        return substr($value, 0, 3) . '****' . substr($value, -4);
+    }
 }
