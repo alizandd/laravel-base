@@ -24,5 +24,10 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
 
         Route::middleware(['auth:api'])->group(function () {
             Route::get('/user/profile', [UserController::class,'index']);
+            Route::post('/generate-scoped-token', [AuthController::class,'generateScopedToken']);
+            Route::patch('/user/profile', [UserController::class,'updateProfile']);
+        });
+        Route::middleware(['auth:api','scope:Web'])->group(function () {
+            //Route::patch('/user/profile', [UserController::class,'updateProfile']);
         });
 });

@@ -31,7 +31,7 @@ class TokenService implements TokenInterface
         $tokens = $user->tokens;
         foreach ($tokens as $token) {
             if ($token->scopes && in_array($scope, $token->scopes)) {
-                $token->revoke();
+                $token->delete();
             }
         }
 
@@ -42,10 +42,10 @@ class TokenService implements TokenInterface
         $token->expires_at = $expiresAt;
         $token->save();
 
-        return response()->json([
+        return [
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => $expiresAt->toDateTimeString()
-        ]);
+        ];
     }
 }

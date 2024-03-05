@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\UpdateProfileRequest;
 use App\Http\Resources\V1\UserProfileResource;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -52,4 +53,48 @@ class UserController extends Controller
     {
         return $this->success(UserProfileResource::make(Auth::user()));
     }
+
+    /**
+     * @OA\Patch(
+     *   path="/user/profile",
+     *   summary="Update User Information",
+     *   operationId="updateUserInfo",
+     *   tags={"User"},
+     *   security = { { "Authorization": {} } },
+     *   @OA\RequestBody(
+     *     required=true,
+     *     description="Data for updating user information",
+     *     @OA\JsonContent(
+     *       required={"first_name", "last_name", "username"},
+     *       @OA\Property(property="first_name", type="string", example="Ali"),
+     *       @OA\Property(property="last_name", type="string", example="Zand"),
+     *       @OA\Property(property="username", type="string", example="alizandd"),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="User updated successfully",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="string", example="success"),
+     *       @OA\Property(property="message", type="string", example="اطلاعات شما با موفقیت به روز رسانی شد ."),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthorized - Invalid or expired token",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="string", example="error"),
+     *       @OA\Property(property="message", type="string", example="Unauthenticated"),
+     *     )
+     *   )
+     * )
+     */
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+       Auth::user()->update(['first_name'=>$request->first_name,'last_name'=>$request->last_name,'username'=>$request->username]);
+       return $this->success([],__('messages.update_success'));
+    }
+
 }

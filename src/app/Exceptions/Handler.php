@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
      * @param  \Illuminate\Auth\AuthenticationException  $exception
      * @return \Illuminate\Http\Response
      */
-    protected function unauthenticated($request, AuthenticationException $exception)
+   /* protected function unauthenticated($request, AuthenticationException $exception)
     {
         // Determine if the request expects a JSON response
         if ($request->expectsJson()) {
@@ -51,7 +51,7 @@ class Handler extends ExceptionHandler
         }
         // For non-API routes, redirect to a login page or return a different type of response
         return parent::unauthenticated($request, $exception);
-    }
+    }*/
     /**
      * Render an exception into an HTTP response.
      *

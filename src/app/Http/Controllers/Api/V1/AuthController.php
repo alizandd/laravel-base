@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\OtpRequest;
 use App\Http\Requests\V1\RegisterRequest;
+use App\Http\Requests\V1\ScopedTokenRequest;
 use App\Http\Resources\V1\GenerateOtpResource;
 use App\Models\Device;
 use App\Models\OtpCode;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use App\Services\Contracts\NotifierInterface;
 use App\Services\Contracts\OtpInterface;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -132,6 +134,56 @@ class AuthController extends Controller
         Device::updateOrCreate(['user_id' => $user->id, 'mac' => $request->mac], ['device_type' => $request->device_type]);
 
         $token = $this->tokenService->createToken($user , $request->device_type);
+        return $this->success($token);
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/generate-scoped-token",
+     *   summary="Generate Scoped Access Token For Web",
+     *   operationId="generateScopedToken",
+     *   tags={"Authentication"},
+     *   security = { { "Authorization": {} } },
+     *   @OA\RequestBody(
+     *     required=true,
+     *     description="Payload for generating a scoped access token",
+     *     @OA\JsonContent(
+     *       required={"scope", "device_type"},
+     *       @OA\Property(property="scope", type="string", description="Scope of the access token", example="Web"),
+     *       @OA\Property(property="device_type", type="string", description="Type of the device requesting the token", example="Tizen")
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Scoped access token generated successfully",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="string", example="success"),
+     *       @OA\Property(property="message", type="string", example=null),
+     *       @OA\Property(
+     *         property="data",
+     *         type="object",
+     *         @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."),
+     *         @OA\Property(property="token_type", type="string", example="Bearer"),
+     *         @OA\Property(property="expires_at", type="string", example="2025-03-03 13:45:44")
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Forbidden - Invalid or expired input",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="string", example="error"),
+     *       @OA\Property(property="message", type="string", example="Unauthenticated .")
+     *     )
+     *   )
+     * )
+     */
+    public function generateScopedToken(ScopedTokenRequest $request)
+    {
+
+        $token = $this->tokenService->createScopeToken(Auth::user() , $request->device_type ,$request->scope);
         return $this->success($token);
     }
 
