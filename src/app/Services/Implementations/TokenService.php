@@ -25,4 +25,27 @@ class TokenService implements TokenInterface
             )->toDateTimeString(),
         ];
     }
+
+    public function createScopeToken(User $user, $type ,$scope):array
+    {
+        $tokens = $user->tokens;
+        foreach ($tokens as $token) {
+            if ($token->scopes && in_array($scope, $token->scopes)) {
+                $token->revoke();
+            }
+        }
+
+        $tokenResult = $user->createToken($type, [$scope]);
+        $expiresAt = Carbon::now()->addDays(1); // Adjust expiration as needed
+
+        $token = $tokenResult->token;
+        $token->expires_at = $expiresAt;
+        $token->save();
+
+        return response()->json([
+            'access_token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
+            'expires_at' => $expiresAt->toDateTimeString()
+        ]);
+    }
 }
