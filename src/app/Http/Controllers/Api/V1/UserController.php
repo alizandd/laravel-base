@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\UpdateProfileRequest;
+use App\Http\Requests\V1\UploadAvatarRequest;
 use App\Http\Resources\V1\UserProfileResource;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -95,6 +96,58 @@ class UserController extends Controller
     {
        Auth::user()->update(['first_name'=>$request->first_name,'last_name'=>$request->last_name,'username'=>$request->username]);
        return $this->success([],__('messages.update_success'));
+    }
+
+    /**
+     * @OA\Patch(
+     *   path="/user/profile/avatar",
+     *   summary="Update User Avatar",
+     *   operationId="updateUserAvatar",
+     *   tags={"User"},
+     *   security = { { "Authorization": {} } },
+     *   @OA\RequestBody(
+     *     required=true,
+     *     description="Upload user avatar",
+     *     @OA\MediaType(
+     *       mediaType="multipart/form-data",
+     *       @OA\Schema(
+     *         required={"avatar"},
+     *         type="object",
+     *         @OA\Property(
+     *           property="avatar",
+     *           description="The user avatar file",
+     *           type="string",
+     *           format="binary",
+     *         ),
+     *       ),
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Avatar updated successfully",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="string", example="success"),
+     *       @OA\Property(property="message", type="string", example="اطلاعات شما با موفقیت به روز رسانی شد ."),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="string", example="error"),
+     *       @OA\Property(property="message", type="string", example="Unauthenticated"),
+     *     )
+     *   )
+     * )
+     */
+    public function updateAvatar(UploadAvatarRequest $request)
+    {
+        $file = $request->file('avatar');
+        $path = $file->store('avatars', 'public'); // Stores in storage/app/public/avatars
+        Auth::user()->update(['pic'=>$path]);
+        return $this->success([],__('messages.update_success'));
     }
 
 }
