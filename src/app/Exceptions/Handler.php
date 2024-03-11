@@ -63,7 +63,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
 
-        if ($request->expectsJson()) {
+        //if ($request->expectsJson()) {
 
 
             if ($exception instanceof \Illuminate\Auth\AuthenticationException) {
@@ -89,7 +89,7 @@ class Handler extends ExceptionHandler
             // You can add more specific exceptions here
 
             return $this->error($exception->getMessage(), $exception->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        //}
 
         return parent::render($request, $exception);
     }

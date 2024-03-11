@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\Wall\LikeController;
 use App\Http\Controllers\Api\V1\Wall\PostController;
+use App\Http\Controllers\Api\V1\Wall\CommentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,10 +32,10 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
 
 
             Route::prefix('wall')->namespace('Wall')->group(function () { //wall
-
-                Route::post('/toggle-like', [LikeController::class, 'toggleLike']);
                 Route::post('/posts', [PostController::class, 'create']);
-
+                Route::get('/posts', [PostController::class, 'index']);
+                Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
+                Route::post('/likes/toggle', [LikeController::class, 'toggleLike']);
             });
 
 

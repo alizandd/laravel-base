@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Str;
 
@@ -56,6 +57,14 @@ class User extends Authenticatable
     public function getMobileAttribute($value)
     {
         return substr($value, 0, 3) . '****' . substr($value, -4);
+    }
+
+    public function getPicAttribute($value)
+    {
+        if($value!=""){
+            return Storage::disk('public')->url($value);
+        }
+        return $value;
     }
 
 }

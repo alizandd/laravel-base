@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-class UserProfileResource extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,7 +20,6 @@ class UserProfileResource extends JsonResource
             'last_name'=>$this->last_name,
             'mobile'=>$this->mobile,
             'pic'=>$this->file_name,
-            'score'=>$this->score,
         ];
     }
 }

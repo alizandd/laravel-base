@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-class UserProfileResource extends JsonResource
+class MediaResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +16,9 @@ class UserProfileResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'first_name'=>$this->first_name,
-            'last_name'=>$this->last_name,
-            'mobile'=>$this->mobile,
-            'pic'=>$this->file_name,
-            'score'=>$this->score,
+            'mime_type' => $this->mime_type,
+            'size' => $this->size,
+            'url' => $this->file_name, // Generate a URL to the media file
         ];
     }
 }

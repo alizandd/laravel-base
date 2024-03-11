@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Wall;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\CreatePostRequest;
+use App\Http\Resources\V1\PostResource;
 use App\Models\Post;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,45 @@ class PostController extends Controller
 {
 
     use ApiResponse;
+
+
+    /**
+     * @OA\Get(
+     *   path="/wall/posts",
+     *   summary="Show All posts",
+     *   operationId="indexPost",
+     *   tags={"Wall"},
+     *   security = { { "Authorization": {} } },
+
+     *   @OA\Response(
+     *     response=200,
+     *     description="Post created successfully",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="string", example="success"),
+     *       @OA\Property(property="message", type="string", example="اطلاعات شما با موفقیت ثبت شد ."),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthorized - Invalid or expired token",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="string", example="error"),
+     *       @OA\Property(property="message", type="string", example="کد وارد شده نامعتبر یا منقضی شده است ."),
+     *     )
+     *   )
+     * )
+     */
+
+    public function index(Request $request)
+    {
+        $posts = Post::with(['user', 'comments.user', 'likes'])->orderBy('created_at','desc')->paginate(10);
+
+        return  $this->paginate(PostResource::collection($posts));
+    }
+
+
     /**
      * @OA\Post(
      *   path="/wall/posts",
@@ -82,7 +122,7 @@ class PostController extends Controller
 
             }
         }
-
-        return $this->success([]);
+        $post->load('media');
+        return $this->success(PostResource::make($post),__('messages.submit_success'));
     }
 }

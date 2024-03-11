@@ -26,4 +26,22 @@ trait ApiResponse
 
         return response()->json($response, $code);
     }
+
+    protected function paginate($paginatedData, $message = null, $code = Response::HTTP_OK)
+    {
+        $paginationDetails = [
+            'total' => $paginatedData->total(),
+            'perPage' => $paginatedData->perPage(),
+            'currentPage' => $paginatedData->currentPage(),
+            'lastPage' => $paginatedData->lastPage(),
+            'nextPageUrl' => $paginatedData->nextPageUrl(),
+            'prevPageUrl' => $paginatedData->previousPageUrl(),
+        ];
+
+        $data = [
+            'items' => $paginatedData->items(),
+            'pagination' => $paginationDetails,
+        ];
+        return self::success($data,$message,$code);
+    }
 }
