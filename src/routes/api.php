@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\Wall\LikeController;
 use App\Http\Controllers\Api\V1\Wall\PostController;
 use App\Http\Controllers\Api\V1\Wall\CommentController;
+use App\Http\Controllers\Api\V1\Wall\ReportController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,6 +37,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
                 Route::get('/posts', [PostController::class, 'index']);
                 Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
                 Route::post('/likes/toggle', [LikeController::class, 'toggleLike']);
+                Route::post('/report', [ReportController::class, 'store']);
             });
 
 

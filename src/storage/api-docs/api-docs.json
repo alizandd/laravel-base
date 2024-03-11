@@ -864,6 +864,99 @@
                 ]
             }
         },
+        "/wall/report": {
+            "post": {
+                "tags": [
+                    "Wall"
+                ],
+                "summary": "Report a post or comment",
+                "operationId": "reportItem",
+                "requestBody": {
+                    "description": "Report a post or comment with a reason",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "type",
+                                    "id",
+                                    "reason"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "description": "Type of the item being reported",
+                                        "type": "string",
+                                        "enum": [
+                                            "Post",
+                                            "Comment"
+                                        ],
+                                        "example": "Post"
+                                    },
+                                    "id": {
+                                        "description": "ID of the item being reported",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "reason": {
+                                        "description": "Reason for reporting",
+                                        "type": "string",
+                                        "example": "This is inappropriate content."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Report submitted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully Report"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid or missing token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized ."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/api/resource.json": {
             "get": {
                 "operationId": "c3013fe5e1526f700bdee1621fb6e399",
