@@ -31,7 +31,7 @@
                 "Host": {
                     "enum": [
                         "localhost/backend/src/public/api",
-                        "ssn.tvapps.ir/api",
+                        "hamsam-dev.ir/api",
                         "127.0.0.1:8000/api"
                     ],
                     "default": "localhost/backend/src/public/api"
@@ -316,6 +316,159 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Unauthenticated ."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/score": {
+            "post": {
+                "tags": [
+                    "Score"
+                ],
+                "summary": "Submit score based on activity type",
+                "operationId": "submitScore",
+                "requestBody": {
+                    "description": "Submit score for a specific activity",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "type"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "description": "Type of activity for score submission",
+                                        "type": "string",
+                                        "enum": [
+                                            "watch_video",
+                                            "complete_profile",
+                                            "play_game",
+                                            "upload_video"
+                                        ],
+                                        "example": "watch_video"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": ""
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "user_score": {
+                                                    "type": "integer",
+                                                    "example": 230
+                                                },
+                                                "points_added": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "daily_total": {
+                                                    "type": "integer",
+                                                    "example": 200
+                                                },
+                                                "action": {
+                                                    "type": "string",
+                                                    "example": "WatchVideo"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "user_score": {
+                                                    "type": "integer",
+                                                    "example": 230
+                                                },
+                                                "points_added": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "daily_total": {
+                                                    "type": "integer",
+                                                    "example": 200
+                                                },
+                                                "action": {
+                                                    "type": "string",
+                                                    "example": "WatchVideo"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

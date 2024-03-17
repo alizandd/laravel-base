@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Wall\LikeController;
 use App\Http\Controllers\Api\V1\Wall\PostController;
 use App\Http\Controllers\Api\V1\Wall\CommentController;
 use App\Http\Controllers\Api\V1\Wall\ReportController;
+use App\Http\Controllers\Api\V1\ScoreController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,6 +31,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
             Route::get('/user/profile', [UserController::class,'index']);
             Route::post('/generate-scoped-token', [AuthController::class,'generateScopedToken']);
             Route::patch('/user/profile', [UserController::class,'updateProfile']);
+            Route::post('/score', [ScoreController::class,'index']);
 
 
             Route::prefix('wall')->namespace('Wall')->group(function () { //wall

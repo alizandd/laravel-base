@@ -21,7 +21,7 @@ trait ApiResponse
         ];
 
         if (!empty($errors)) {
-            $response['errors'] = $errors;
+            $response['data'] = $errors;
         }
 
         return response()->json($response, $code);

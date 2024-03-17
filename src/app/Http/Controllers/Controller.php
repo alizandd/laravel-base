@@ -39,7 +39,7 @@ use Illuminate\Routing\Controller as BaseController;
  *   ),
  *   @OA\ServerVariable(
  *     serverVariable="Host",
- *     enum={"localhost/backend/src/public/api","ssn.tvapps.ir/api","127.0.0.1:8000/api"},
+ *     enum={"localhost/backend/src/public/api","hamsam-dev.ir/api","127.0.0.1:8000/api"},
  *     default="localhost/backend/src/public/api"
  *   ),
  * )

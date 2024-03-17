@@ -52,6 +52,11 @@ return [
     */
 
     'channels' => [
+        'score' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/score.log'),
+            'level' => 'info',
+        ],
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],
